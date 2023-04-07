@@ -7,13 +7,14 @@ const pool = mysql.createPool({
     databse:  process.env.DB_NAME,
     password: process.env.DB_PASSWORD, }
 );
-pool.execute("select * from `library_management`.`Book`",(err,res)=>{
-    if(err) throw err;
-    // res.forEach(element => {
-    //     console.log(element.Title);
-    // });
-    // console.log(res);
-});
+
+// pool.execute("select * from `library_management`.`Book`",(err,res)=>{
+//     if(err) throw err;
+//     res.forEach(element => {
+//         console.log(element.Title);
+//     });
+//     // console.log(res);
+// });
 
 
 

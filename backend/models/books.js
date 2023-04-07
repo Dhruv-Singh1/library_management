@@ -1,12 +1,14 @@
 const db  = require("../config/db")
 class Book{
-    constructor(isbn,title,edition,author,publisher,genre,copies){
+    constructor(isbn,title,edition,publisher,authors,copies,genre){
+        // ISBN,Title,Edition,Publisher,Authors,Copies,Genre);
         this.title=title;
         this.isbn=isbn;
         this.edition=edition;
-        this.author=author;
+        this.authors=authors;
         this.publisher=publisher;
         this.genre=genre;
+        this.copies=copies
     }
 
     async save(){
@@ -17,24 +19,46 @@ class Book{
 
         let borrowedDate = `${yyyy}-${mm}-${dd}`
         // ISBN,Title,Edition,Publisher, AuthorID ,Copies 
-        let insertAuthor= `insert into \`library_management\`.\`Author\` (Name) values ('${this.author}')`;
+        // console.log(publisher,authors,copies)
+
+       try{ let insertgenre= `insert into \`library_management\`.\`book_genre\` values ('${this.title}','${this.genre}')`;
+       await db.execute(insertgenre);
+        }
+       catch(err){
+            console.log(err);
+       }
+
+       try{ let insertbook= `insert into \`library_management\`.\`Book\` values (${this.isbn},'${this.title}',${this.edition},'${this.publisher}',${this.copies})`;
+
+       await db.execute(insertbook);
+        }
+       catch(err){
+            console.log(err);
+       }
         
-        const [newAuthor,_] = await db.execute(insertAuthor);
-        
-        let sql= `insert into \`library_management\`.\`Book\` values (
-            ${this.isbn},
-            '${this.title}',
-            ${this.edition},
-            '${this.publisher}',
-            ${this.copies}
-        )`;
+
+        this.authors.forEach(author => {
+            
+            if (typeof author !== 'undefined')
+            {let insertAuthor= `insert into \`library_management\`.\`Author\`  values (${this.isbn},'${author}')`;
+                db.execute(insertAuthor); console.log(author);}
+            
+        });        
+
     }
+
     static findAll(){
-        let sql ="select * from `library_management`.`Book`";
+        let sql ="select * from `library_management`.`Book` natural join `library_management`.`book_genre` natural join `library_management`.`Author`";
         return db.execute(sql);
     }
+
     static findById(id){
         let sql =`select * from \`library_management\`.\`Book\` where isbn = ${id}`;
+        return db.execute(sql);
+    }
+
+    static findByTitle(title){
+        let sql =`select * from \`library_management\`.\`Book\` where Title like '%${title}%' `;
         return db.execute(sql);
     }
 }
