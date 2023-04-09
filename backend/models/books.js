@@ -48,18 +48,28 @@ class Book{
     }
 
     static findAll(){
-        let sql ="select * from `library_management`.`Book` natural join `library_management`.`book_genre` natural join `library_management`.`Author`";
+        let sql ="select * from `library_management`.`Book` natural join  `library_management`.`Author` group by ISBN";
         return db.execute(sql);
     }
 
     static findById(id){
         let sql =`select * from \`library_management\`.\`Book\` where isbn = ${id}`;
-        return db.execute(sql);
+        let res1=  db.execute(sql);
+        let sql2 =`select * from \`library_management\`.\`Author\` where isbn = ${id}`;
+        let res2=db.execute(sql2);
+        
+        
+        
+        
+  
+        return [res1 ,res2] ;
+     
     }
 
     static findByTitle(title){
         let sql =`select * from \`library_management\`.\`Book\` where Title like '%${title}%' `;
         return db.execute(sql);
+        
     }
 }
 module.exports=Book;

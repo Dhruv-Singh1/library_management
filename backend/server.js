@@ -7,8 +7,8 @@ const app = express();
 app.use(express.json());//parse json bodiesin the request object
 
 app.use("/books",require("./routes/postBooks"));
-// app.use("/user",require("./routes/postBooks"));
-// app.use("/borrow",require("./routes/postBooks"));
+app.use("/user",require("./routes/postUsers"));
+// app.use("/borrow",require("./routes/postBorrow"));
 
 app.use((err,req,res,next)=>{
     console.log(err.stack);
@@ -16,7 +16,7 @@ app.use((err,req,res,next)=>{
     console.log(err.code);
 
     res.status(500).json({"message":"something went wrong"});
-    // return;
+
 
 });
 
