@@ -26,8 +26,9 @@ class User{
     }
 
     static findById(id){
-        let sql =`select * from \`library_management\`.\`user\` where cardno = ${id}`;
+        let sql =`select * from \`library_management\`.\`user\` where email = '${id}'`;
         return db.execute(sql);
+        
     }
 
 }

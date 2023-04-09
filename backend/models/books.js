@@ -1,7 +1,6 @@
 const db  = require("../config/db")
 class Book{
     constructor(isbn,title,edition,publisher,authors,copies,genre){
-        // ISBN,Title,Edition,Publisher,Authors,Copies,Genre);
         this.title=title;
         this.isbn=isbn;
         this.edition=edition;
@@ -16,10 +15,7 @@ class Book{
         let yyyy= d.getFullYear();
         let mm= d.getMonth()+1;
         let dd= d.getDate();
-
         let borrowedDate = `${yyyy}-${mm}-${dd}`
-        // ISBN,Title,Edition,Publisher, AuthorID ,Copies 
-        // console.log(publisher,authors,copies)
 
        try{ let insertgenre= `insert into \`library_management\`.\`book_genre\` values ('${this.title}','${this.genre}')`;
        await db.execute(insertgenre);
@@ -27,7 +23,6 @@ class Book{
        catch(err){
             console.log(err);
        }
-
        try{ let insertbook= `insert into \`library_management\`.\`Book\` values (${this.isbn},'${this.title}',${this.edition},'${this.publisher}',${this.copies})`;
 
        await db.execute(insertbook);
@@ -35,8 +30,6 @@ class Book{
        catch(err){
             console.log(err);
        }
-        
-
         this.authors.forEach(author => {
             
             if (typeof author !== 'undefined')
@@ -57,13 +50,7 @@ class Book{
         let res1=  db.execute(sql);
         let sql2 =`select * from \`library_management\`.\`Author\` where isbn = ${id}`;
         let res2=db.execute(sql2);
-        
-        
-        
-        
-  
         return [res1 ,res2] ;
-     
     }
 
     static findByTitle(title){

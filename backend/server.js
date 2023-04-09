@@ -1,4 +1,3 @@
-var http = require('http');
 require("dotenv").config();
 const express= require("express");
 const app = express();
@@ -8,7 +7,7 @@ app.use(express.json());//parse json bodiesin the request object
 
 app.use("/books",require("./routes/postBooks"));
 app.use("/user",require("./routes/postUsers"));
-// app.use("/borrow",require("./routes/postBorrow"));
+app.use("/borrow",require("./routes/postBorrow"));
 
 app.use((err,req,res,next)=>{
     console.log(err.stack);

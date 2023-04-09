@@ -1,9 +1,8 @@
-// const express = require('express');
-// const router = express.Router();
-// const postControllers = require("../controllers/borrowControllers.js")
+const express = require("express");
+const router = express.Router();
+const borrowControllers = require("../controllers/borrowControllers.js");
 
-// //@route GET & POST - /
-// router.route("/").post(borrowControllers.createUser);
-// router.route("/:id").get(borrowControllers.getUser)
-    
-// module.exports= router;
+//@route GET & POST - /
+router.route("/borrow").post(borrowControllers.borrowBook);
+router.post("/return",borrowControllers.returnBook);
+module.exports= router;

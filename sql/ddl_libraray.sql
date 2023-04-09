@@ -10,6 +10,7 @@
      Edition int unsigned not null,
 	 Publisher varchar(45),
      Copies int unsigned not null ,
+     price float not null,
 	 CONSTRAINT valid_ISBN CHECK ( length(ISBN) = 13),
 	CONSTRAINT fk_genre_book FOREIGN KEY (Title) REFERENCES `library_management`.`book_genre`(BookTitle) on delete  cascade,
     CONSTRAINT book_edn UNIQUE (Title,Edition)
@@ -120,23 +121,6 @@ update Book set Copies =3 where ISBN  ;
 select * from circulation;
 delete from  circulation where loan_id=1;
 
-DELIMITER $$;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `issuebook`(IN isbn decimal(13,0), IN cardno varchar(10))
-    READS SQL DATA
-    SQL SECURITY INVOKER
-BEGIN
-Declare copy int unsigned;
-Set copy = (select copies from Book where Book.ISBN = isbn );
-IF copy>0 THEN 
-		Start transaction;
-		SET copy = copy-1;
-		Update Book set Book.Copies=copy where Book.ISBN = isbn;
-		insert into `library_management`.`circulation`(book_id,CardNo ,loan_date ,due_date,status) values(isbn,cardno,curdate(),curdate()+7,"P");
-        Commit;
-
-END IF;
-End
-DELIMITER ;
 
 DELIMITER $$;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `returnbook`(IN loan_id int, IN cardno int)
@@ -152,26 +136,29 @@ if curdate()>   duedate then
 		set fine=(DATEDIFF(arrival, departure)*5);
 		insert into `library_management`.`fine`  values(cardno,fine,loan_id,"Late return");
         Commit;
-
+        
 END IF;
 End
 DELIMITER ;
+
 insert into `library_management`.`circulation`(book_id,CardNo ,loan_date ,due_date,status) values(1234567890126,20200969,"2023-04-01","2023-04-06","P");
 CALL issuebook(1234567890126,20200969) ;
-CALL returnbook(38,20200969) ;
+CALL returnbook(44,2020111) ;
 
-select @copy;
 select * from Circulation;
 select * from fine;
 select * from Book;
 delete  from circulation;
-SELECT @isbn;
 
 insert into `library_management`.`fine`  values(20200969,10,40,"Late return");
 -- All checked out books from library
-select  Book.ISBN,Book.ISBN,Book.Edition,Book.Publisher ,Book.Copies as Copies_Availabe , count(Book.ISBN) as Lended_Copies from Book inner  join Circulation on Book.ISBN=Circulation.book_id where Book.ISBN group by Book.ISBN;
+select  Book.ISBN,Book.ISBN,Book.Edition,Book.Publisher ,Book.Copies as Copies_Availabe , count(Book.ISBN) as Lended_Copies from Book inner join Circulation on Book.ISBN=Circulation.book_id where Book.ISBN group by Book.ISBN;
 -- Total Fine for User
 select User.cardno, User.Name  , sum(fine.charges) as Total_Fine from User natural join fine where cardno=20200969 group by cardno;
+-- All checked out by user
+
+-- all fined borrows of the user   
+select  Circulation.loan_id ,Book.ISBN,Book.Title,Book.Edition,Circulation.due_date ,Circulation.returned_date,fine.charges,fine.reason from Book inner join Circulation on Book.ISBN=circulation.book_id inner join fine on (circulation.CardNo=fine.CardNo and circulation.loan_id=fine.circulation_id) where Circulation.CardNo=20200969  ;
 
 alter table user modify Password varchar(60) not null;
 

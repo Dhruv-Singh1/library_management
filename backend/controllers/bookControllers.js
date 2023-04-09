@@ -13,6 +13,7 @@ exports.getAllBooks= async (req,res,next)=>{
             let auth=[];
             res2=res2[0];
             console.log(res2);
+            
             res2.forEach((ent)=>{auth.push(ent["Name"])})
             res1=res1[0][0];
             res1["Author"]=auth;
