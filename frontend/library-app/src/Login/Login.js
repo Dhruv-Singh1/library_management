@@ -3,14 +3,16 @@ import {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import './Login.css'
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from 'axios';
 
 
 export default function Login() {
 
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
+    const [logininfo,setlogininfo] = useState({
+      email: '',
+      pass: ''
+    })
     const [passwordError, setpasswordError] = useState("");
-    const [emailError, setemailError] = useState("");
     const [Login,setLogin] = useState(false);
 
     const navigate = useNavigate();
@@ -21,13 +23,19 @@ export default function Login() {
 
     const handleSubmission = (e) => {
         e.preventDefault();
-        if ( email == "cool@gmail.com") {
-            setLogin(true);
-        }
 
-        if(Login){
+        axios.post('http://localhost:8000/user/login', logininfo)
+          .then(res => {
+            console.log(res.data);
             navigate('/User');
-        }
+          })
+          .catch(err => {
+            console.log(err);
+            setpasswordError("username or password is invalid")
+
+            // handle error
+          });       
+        
     }
     
 
@@ -42,11 +50,8 @@ export default function Login() {
                   type="email"
                   className="form-control"
                   placeholder="Enter email"
-                  onChange={(event) => setEmail(event.target.value)}
+                  onChange={(event) => setlogininfo({...logininfo, email: event.target.value})}
                 />
-                <small id="emailHelp" className="text-danger form-text">
-                  {emailError}
-                </small>
               </div>
               <div className="form-group">
                 <label>Password</label>
@@ -54,7 +59,7 @@ export default function Login() {
                   type="password"
                   className="form-control"
                   placeholder="Password"
-                  onChange={(event) => setPassword(event.target.value)}
+                  onChange={(event) => setlogininfo({...logininfo, pass: event.target.value})}
                 />
                 <small id="passworderror" className="text-danger form-text">
                   {passwordError}

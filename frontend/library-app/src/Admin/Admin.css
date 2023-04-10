@@ -1,6 +1,6 @@
-/* .book-list {
-    width: 100%;
-    max-width: 800px;
+.book-list {
+    width: 80%;
+    max-width: 600px;
     margin: 0 auto;
     text-align: center;
   }
@@ -50,7 +50,7 @@
   .book .genre {
     font-style: italic;
     margin-top: 10px;
-  } */
+  }
 
   .book-container {
     display: flex;
@@ -134,4 +134,4 @@
   .book-actions button:hover {
     background-color: #f2f2f2;
   }
-  
+   

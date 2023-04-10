@@ -29,6 +29,7 @@ export default function Admin() {
 
     return(
         <div>
+            
             Admin Page
             <Booklistfunc bookList={Booklist} /> 
             {console.log(Booklist)}

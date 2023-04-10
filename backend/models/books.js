@@ -1,13 +1,15 @@
 const db  = require("../config/db")
 class Book{
-    constructor(isbn,title,edition,publisher,authors,copies,genre){
-        this.title=title;
+    constructor(isbn,title,edition,publisher,authors,copies,genre,price){
+       
         this.isbn=isbn;
+        this.title=title;
         this.edition=edition;
         this.authors=authors;
         this.publisher=publisher;
         this.genre=genre;
         this.copies=copies
+        this.price=price
     }
 
     async save(){
@@ -23,20 +25,29 @@ class Book{
        catch(err){
             console.log(err);
        }
-       try{ let insertbook= `insert into \`library_management\`.\`Book\` values (${this.isbn},'${this.title}',${this.edition},'${this.publisher}',${this.copies})`;
+       try{ let insertbook= `insert into \`library_management\`.\`Book\` values (${this.isbn},'${this.title}',${this.edition},'${this.publisher}',${this.copies},${this.price})`;
 
-       await db.execute(insertbook);
+       let res1= db.execute(insertbook);
+       res1.then((res11)=>{
+        
+       });
+
+       this.authors.forEach(author => {
+        var delayInMilliseconds = 5000; //1 second
+
+       
+            if (typeof author !== 'undefined')
+            {let insertAuthor= `insert into \`library_management\`.\`Author\`  values (${this.isbn},'${author}')`;
+                db.execute(insertAuthor); console.log(author);}
+   
+       
+        
+    });   
         }
        catch(err){
             console.log(err);
        }
-        this.authors.forEach(author => {
-            
-            if (typeof author !== 'undefined')
-            {let insertAuthor= `insert into \`library_management\`.\`Author\`  values (${this.isbn},'${author}')`;
-                db.execute(insertAuthor); console.log(author);}
-            
-        });        
+     
 
     }
 

@@ -30,7 +30,7 @@ exports.getAllBooks= async (req,res,next)=>{
                 book["Genre"]=gen[0][0]["Genre"];
                console.log(i++);
               
-                console.log( books);
+                // console.log( books);
                 if(i==len+1){  res.status(200).json({count:books.length,books  });}
                 
                 });
@@ -50,9 +50,10 @@ exports.getAllBooks= async (req,res,next)=>{
 
 exports.createNewBook= async (req,res,next)=>{
     try{
-    let { ISBN, Title, Edition,Publisher,Authors, Copies,Genre} =req.body;
-    console.log(Publisher,Authors,Copies,Genre);
-    let book = new Book(ISBN,Title,Edition,Publisher,Authors,Copies,Genre);
+    let { ISBN, Title, Edition,Publisher,Authors, Copies,Genre,price} =req.body;
+    console.log("trying to create book")
+    console.log(Publisher,Authors,Copies,Genre,price);
+    let book = new Book(ISBN,Title,Edition,Publisher,Authors,Copies,Genre,price);
     book= await book.save();
     console.log(book);
     res.status(201).send({message:" Created new book"});   
@@ -95,6 +96,30 @@ exports.getBookByTitle= async (req,res,next)=>{
     try{
     let [book,_]=await Book.findByTitle(req.params.title);
     res.status(200).send({book});   
+   }catch(err){
+    console.log(err);
+    next(err);
+    }
+}
+
+exports.deleteBook= async (req,resp,next)=>{
+    try{
+    let isbn=req.params.id
+    
+console.log(isbn);
+    let book= db.execute(`select Book.Title from \`library_management\`.\`Book\` where Book.ISBN= ${isbn}` );
+
+    book.then((res)=>{
+        // console.log(res[0].Title);
+        let insertgenre= `delete from \`library_management\`.\`book_genre\` where BookTitle='${res[0]["Title"]}'`;
+        db.execute(insertgenre);
+        resp.status(200).send({message:"book deleted"}); 
+        
+    });
+    db.execute(`delete from \`library_management\`.\`Book\` where Book.ISBN= ${isbn}`);
+    db.execute(`delete from \`library_management\`.\`Author\` where Author.ISBN= ${isbn}`);
+
+   
    }catch(err){
     console.log(err);
     next(err);
