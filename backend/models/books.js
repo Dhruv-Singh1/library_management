@@ -40,9 +40,46 @@ class Book{
 
     }
 
-    static findAll(){
-        let sql ="select * from `library_management`.`Book` natural join  `library_management`.`Author` group by ISBN";
-        return db.execute(sql);
+    static async findAll(){
+        let sql ="select * from `library_management`.`Book`";
+        let res1= db.execute(sql);
+            let i=1;
+        res1.then((books)=>{
+            // console.log(book);
+            
+            books=books[0];
+            const len = books.length;
+            // console.log(books);
+            books.forEach((book)=>{
+            // console.log(book.Title);
+            let title=book.Title;
+            let isbn=book.ISBN;
+            let sql2 =`select * from \`library_management\`.\`Author\` where isbn = ${isbn}`;
+            let res2=db.execute(sql2);
+            let sql3 =`select * from \`library_management\`.\`book_genre\` where BookTitle = '${title}'`;
+            let res3=db.execute(sql3);
+            res2.then((res2)=>{
+                let authors=[];
+                res2=res2[0];
+                // console.log(res2);
+                res2.forEach((ent)=>{authors.push(ent["Name"])})
+                book["Author"]=authors;
+
+                res3.then((gen)=>{
+                book["Genre"]=gen[0][0]["Genre"];
+               console.log(i++);
+               if(i==len){ return books;}
+                // console.log( books);
+                
+                });
+                } ); 
+                
+            });
+           
+            // return books;
+            
+        }); 
+        
     }
 
     static findById(id){

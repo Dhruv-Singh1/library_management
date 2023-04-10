@@ -24,6 +24,7 @@ exports.returnBook= async (req,res,next)=>{
             let circulation=`CALL \`library_management\`.returnbook(${loan_id},${CardNo}) `;
             await db.execute(circulation);
             let res1= db.execute(insertcirculation);
+            db.execute()
             res1.then((res1)=>{
                 res.status(200).send({message:" Returned a book",borrowed:res1[0]});   
             });

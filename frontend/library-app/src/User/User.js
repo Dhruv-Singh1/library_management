@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from 'react'
+import {useState} from 'react'
 
 function User() {
   const [searchText, setSearchText] = useState("");

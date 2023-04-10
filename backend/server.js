@@ -1,6 +1,14 @@
 require("dotenv").config();
 const express= require("express");
 const app = express();
+const cors = require('cors');
+
+app.use(cors({
+    origin: '*'
+}));
+app.use(cors({
+    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}))
 
 //Middleware
 app.use(express.json());//parse json bodiesin the request object
@@ -15,8 +23,6 @@ app.use((err,req,res,next)=>{
     console.log(err.code);
 
     res.status(500).json({"message":"something went wrong"});
-
-
 });
 
 //listen on pc port

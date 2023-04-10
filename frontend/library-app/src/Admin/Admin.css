@@ -1,0 +1,53 @@
+.book-list {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .book-list h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  .book-list .count {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .book-list .books {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .book {
+    width: 300px;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+  
+  .book p {
+    margin: 0;
+    padding: 5px;
+  }
+  
+  .book .isbn {
+    font-weight: bold;
+  }
+  
+  .book .title {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .book .author {
+    font-style: italic;
+  }
+  
+  .book .genre {
+    font-style: italic;
+    margin-top: 10px;
+  }
