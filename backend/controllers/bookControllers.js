@@ -17,7 +17,7 @@ exports.getAllBooks= async (req,res,next)=>{
             let isbn=book.ISBN;
             let sql2 =`select * from \`library_management\`.\`Author\` where isbn = ${isbn}`;
             let res2=db.execute(sql2);
-            let sql3 =`select * from \`library_management\`.\`book_genre\` where BookTitle = '${title}'`;
+            let sql3 =`select * from \`library_management\`.\`book_genre\` where BookTitle = "${title}"`;
             let res3=db.execute(sql3);
             res2.then((res2)=>{
                 let authors=[];
