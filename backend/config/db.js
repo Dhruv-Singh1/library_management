@@ -9,15 +9,4 @@ const pool = mysql.createPool({
     multipleStatements: true,
 }
 );
-
-// pool.execute("select * from `library_management`.`Book`",(err,res)=>{
-//     if(err) throw err;
-//     res.forEach(element => {
-//         console.log(element.Title);
-//     });
-//     // console.log(res);
-// });
-
-
-
 module.exports= pool.promise();

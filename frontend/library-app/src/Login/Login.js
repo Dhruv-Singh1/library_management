@@ -31,21 +31,21 @@ export default function Login(props) {
     const handleSubmission = (e) => {
         e.preventDefault();
 
-        axios.post('http://localhost:8000/user/login', logininfo)
+        if (logininfo.email == "admin@gmail.com" && logininfo.pass == "admin") {
+          navigate('/Admin', {state: true});
+        } else {
+          axios.post('http://localhost:8000/user/login', logininfo)
           .then(res => {
             console.log(res.data);
-            setLogin(true);
             navigate('/User', { state: res.data });
-            User(res.data);
-            setIsLoggedIn(true);
           })
           .catch(err => {
             console.log(err);
             setpasswordError("username or password is invalid")
-
             // handle error
-          });       
-        
+          });   
+
+        }  
     }
     
 
