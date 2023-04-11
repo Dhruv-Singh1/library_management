@@ -71,3 +71,19 @@ exports.getAllBorrowedBooks= async (req,res,next)=>{
     next(err);
     }
 }
+
+exports.sendbooks= async (req,resp,next)=>{
+    try{
+    let CardNo= req.params.id;
+    console.log("sending issued books");
+    let book= db.execute(`select * from   \`library_management\`.\`circulation\` inner join  \`library_management\`.\`Book\` on circulation.book_id=Book.ISBN  where CardNo=${CardNo} and status='P'`);
+    book.then((res)=>{
+       console.log(res[0])
+       resp.status(200).send(res[0]);  
+    });
+   
+   }catch(err){
+    console.log(err);
+    next(err);
+    }
+}

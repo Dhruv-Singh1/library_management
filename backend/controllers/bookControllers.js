@@ -7,7 +7,6 @@ exports.getAllBooks= async (req,res,next)=>{
             let i=1;
         res1.then((books)=>{
             // console.log(book);
-            
             books=books[0];
             const len = books.length;
             // console.log(books);
@@ -125,3 +124,6 @@ console.log(isbn);
     next(err);
     }
 }
+
+
+

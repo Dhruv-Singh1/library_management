@@ -6,10 +6,13 @@ import './Login.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 import {setGlobalState , useGlobalState} from '../userContext'
+import { useContext } from 'react';
+import AuthContext from '../authContext';
 
 
 
 export default function Login(props) {
+  const { setIsLoggedIn } = useContext(AuthContext);
 
     const [logininfo,setlogininfo] = useState({
       email: '',
@@ -32,8 +35,9 @@ export default function Login(props) {
           .then(res => {
             console.log(res.data);
             setLogin(true);
-            navigate('/User');
+            navigate('/User', { state: res.data });
             User(res.data);
+            setIsLoggedIn(true);
           })
           .catch(err => {
             console.log(err);

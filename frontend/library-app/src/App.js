@@ -6,12 +6,14 @@ import Register from './Register/Register';
 import User from './User/User';
 import Admin from './Admin/Admin'
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import AuthContext from './authContext';
 function App() {
 
-  const [Loggedin,setLoggedin] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 
   return (
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
     <div className="App">
         <BrowserRouter>
           <Routes>
@@ -26,6 +28,7 @@ function App() {
           </Routes>
         </BrowserRouter>
     </div>
+    </AuthContext.Provider>
   );
 }
 
