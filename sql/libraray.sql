@@ -67,7 +67,7 @@
     RoomNo decimal(4) not null,
     home_address varchar (45),
     CONSTRAINT valid_Hostel CHECK (Hostel in ("Ram","Budh","Meera","CV Raman","Ashok","Ranapratap","Shankar","Vyas","Krishna","Gandhi","Malvia","Bhagirath")),
-     CONSTRAINT valid_RoomNo CHECK (length(CardNo) =4 or length(CardNo)=3),
+     CONSTRAINT valid_RoomNo CHECK (length(RoomNo) =4 or length(RoomNo)=3),
       -- card no is like 20200969
     CONSTRAINT valid_cardno CHECK (length(CardNo) = 8),
     foreign key (CardNo) references `library_management`.`User`(CardNo)
@@ -85,9 +85,8 @@
     status varchar(1) NOT NULL,
 	CONSTRAINT valid_status check (status="P" or status="R") ,
     CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES `library_management`.`Book`(ISBN) , 
-	CONSTRAINT fk_user FOREIGN KEY (CardNo) REFERENCES `library_management`.`User`(CardNo) on delete  cascade
+	CONSTRAINT fk_user FOREIGN KEY (CardNo) REFERENCES `library_management`.`User`(CardNo) on delete  cascade on update cascade
     );
-    
 --  Fines table
     create table `library_management`.`fine`
 	(
@@ -97,7 +96,7 @@
     reason varchar(45),
     FOREIGN KEY (circulation_id) REFERENCES `library_management`.`circulation`(loan_id),
     CONSTRAINT pos_fine check (charges>0) ,
-    CONSTRAINT fk_usr_fine FOREIGN KEY (CardNo) REFERENCES `library_management`.`User`(CardNo) on delete  cascade
+    CONSTRAINT fk_usr_fine FOREIGN KEY (CardNo) REFERENCES `library_management`.`User`(CardNo) on delete  cascade on update cascade
     );
     
 
@@ -124,11 +123,11 @@ insert into `library_management`.`Book` values(9780451524935,"1984" , 1, "Signet
 insert into `library_management`.`Book` values ( 9780141441146,"Jane Eyre" ,1, "Penguin Classics", 4, 399);
 
 -- Science Fiction:
-"Dune" by Frank Herbert (ISBN 9780441172719, Ace Books, Reissue Edition, Ace Books, Rs. 499)
-"The Hitchhiker's Guide to the Galaxy" by Douglas Adams (ISBN 9780345391803, Del Rey Books, Reissue Edition, Del Rey Books, Rs. 499)
-"Ender's Game" by Orson Scott Card (ISBN 9780812550702, Tor Books, Reprint Edition, Tor Science Fiction, Rs. 399)
-"Neuromancer" by William Gibson (ISBN 9780441569595, Ace Books, Reissue Edition, Ace Books, Rs. 499)
-"The War of the Worlds" by H.G. Wells (ISBN 9780141439976, Penguin Classics, Reissue Edition, Penguin Classics, Rs. 299)
+-- "Dune" by Frank Herbert (ISBN 9780441172719, Ace Books, Reissue Edition, Ace Books, Rs. 499)
+-- "The Hitchhiker's Guide to the Galaxy" by Douglas Adams (ISBN 9780345391803, Del Rey Books, Reissue Edition, Del Rey Books, Rs. 499)
+-- "Ender's Game" by Orson Scott Card (ISBN 9780812550702, Tor Books, Reprint Edition, Tor Science Fiction, Rs. 399)
+-- "Neuromancer" by William Gibson (ISBN 9780441569595, Ace Books, Reissue Edition, Ace Books, Rs. 499)
+-- "The War of the Worlds" by H.G. Wells (ISBN 9780141439976, Penguin Classics, Reissue Edition, Penguin Classics, Rs. 299)
 
 
 
@@ -137,12 +136,7 @@ insert into `library_management`.`Book` values (1234567890123,"Pride and Prejudi
 insert into `library_management`.`Book` values (1234567890124,"To Kill a Mockingbird" ,1 ,"HarperCollins",4,300 );
 insert into `library_management`.`Book` values (1234567890125,"The Great Gatsby"  ,1 ,"Scribner",3,200 );
 insert into `library_management`.`Book` values (1234567890126,"The Great Gatsby"  ,2 ,"Scribner",3,200 );
-insert into `library_management`.`Book` values (1234567890126,"The Great Gatsby"  ,2 ,"Scribner",3,200 );
 
-
-
-
-select * from book;
 
 -- inserting data into Author table
 insert into `library_management`.`Author` values (1234567890123,"Jane Austen");
@@ -171,7 +165,6 @@ INSERT INTO `library_management`.`book` VALUES ('9780812550702', 'Ender\'s Game'
 INSERT INTO `library_management`.`author` VALUES ('9780812550702', 'Orson Scott Card');
 
 
-
 -- select * from Book  Book.ISBN=Author.ISBN;
 select * from Author;
 select * from Book;
@@ -186,8 +179,8 @@ insert into `library_management`.`Department` values("Civil","2B");
 insert into `library_management`.`Department` values("Chemical","2B");
 
 select * from department;
--- inserting data into User table 
 
+-- inserting data into User table 
 -- CardNo Name PhoneNumber Email  Password    DeptName
 insert into `library_management`.`User` values(20200969,"Dhruv Singh",1234567890,"f20200969@pilani.bits-pilani.ac.in","pass","Computer Science");
 insert into `library_management`.`User` values(20210909,"ROSHAN BAGLA",1234567890,"f20210909@pilani.bits-pilani.ac.in","pass","Computer Science");
@@ -205,9 +198,9 @@ insert into `library_management`.`User` values(20210900,"AMBEKAR SHANTANU NILESH
 insert into `library_management`.`circulation`(book_id,CardNo ,loan_date ,due_date,status ) values(1234567890123,20200969,"2023-04-08","2023-04-15","P");
 insert into `library_management`.`circulation`(book_id,CardNo ,loan_date ,due_date,status) values(9780812550702,20200969,"2023-04-01","2023-04-06","P");
 
+insert into `library_management`.`fine`values(20200969,50,23,"late return");
+insert into `library_management`.`fine`values(20200969,0,24,"late return");
 
-select * from user;
-delete from  circulation where loan_id=1;
 
 -- insert into Fine table 
 insert into `library_management`.`fine`  values(20200969,10,40,"Late return");
@@ -219,37 +212,70 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `returnbook`(IN loan_id int, IN card
     READS SQL DATA
     SQL SECURITY INVOKER
 BEGIN
+Declare status varchar(1) ;
+Declare isbn decimal(13) ;
 Declare duedate date ;
+Declare copy int unsigned ;
 Declare fine float ;
+
+set isbn=(select circulation.book_id from `library_management`.`circulation` where circulation.loan_id=loan_id);
+set status=(select circulation.status from `library_management`.`circulation` where circulation.loan_id=loan_id);
+Set copy = (select copies from Book where Book.ISBN = isbn );
+SET autocommit = 0;  
+if status='P' then
 Start transaction;
-set duedate=(select due_date from `library_management`.`circulation` where circulation.loan_id=loan_id);
-update `library_management`.`circulation` set circulation.returned_date=curdate() and circulation.status="R" where circulation.loan_id=loan_id;
-if curdate()>   duedate then
-		set fine=(DATEDIFF(arrival, departure)*5);
-		insert into `library_management`.`fine`  values(cardno,fine,loan_id,"Late return");
-        Commit;
-        
+	SET copy = copy+1;
+	Update Book set Book.Copies=copy where Book.ISBN = isbn;
+	set duedate=(select due_date from `library_management`.`circulation` where circulation.loan_id=loan_id);
+	update `library_management`.`circulation` set circulation.returned_date= curdate() , circulation.status="R" where circulation.loan_id=loan_id;
+	if curdate()>   duedate then
+			set fine=(DATEDIFF(curdate(), duedate)*5);
+			insert into `library_management`.`fine`  values(cardno,fine,loan_id,"Late return");
+            select fine;
+Commit;
+Rollback;
+	END IF;
 END IF;
+SET autocommit = 1;  
 End
 DELIMITER ;
 
 
 -- Procedure for borrowing/issue books 
 DELIMITER $$;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `issuebook`(IN isbn decimal(13,0), IN cardno varchar(10))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `issuebook`(IN isbn decimal(13,0), IN cardno varchar(10), INOUT res varchar(40))
     READS SQL DATA
     SQL SECURITY INVOKER
 BEGIN
 Declare copy int unsigned;
+Declare count int unsigned;
+Declare rep int unsigned;
+Set res="";
 Set copy = (select copies from Book where Book.ISBN = isbn );
-IF copy>0 THEN 
+Set count = (select count(*) from `library_management`.`circulation` where`circulation`.CardNo=cardno and `circulation`.status ="P" );
+Set rep = (select count(*) from `library_management`.`circulation` where`circulation`.CardNo=cardno and `circulation`.status ="P" and `circulation`.book_id =isbn );
+
+IF copy>0 and rep=0 and count<5 THEN 
+		SET autocommit = 0;  
 		Start transaction;
 		SET copy = copy-1;
 		Update Book set Book.Copies=copy where Book.ISBN = isbn;
 		insert into `library_management`.`circulation`(book_id,CardNo ,loan_date ,due_date,status) values(isbn,cardno,curdate(),curdate()+7,"P");
+        set res=("Issued Sucessfully !");
         Commit;
+        Rollback;
+        SET autocommit = 1; 
+ELSEIF copy>0 and count>=5 THEN 
+	set res=("Cannot issue more than 5 Books!");
+ELSEIF rep>0  THEN 
+	set res=("Cannot issue same book twice!");
+ELSEIF copy=0  THEN 
+	set res=("No more copies available to borrow!");
+ELSE 
+	set res=("Error occurred");
 
 END IF;
+select res;
 End
 DELIMITER ;
 
@@ -279,36 +305,35 @@ END IF;
 End
 DELIMITER ;
 
+select renewbook(23,2020969);
 
-
-
-select renewbook(43,2020969);
-
-
-
-
-CALL issuebook(1234567890126,20200969) ;
-CALL returnbook(44,20200969) ;
+Set @res ="";
+CALL issuebook(9780446310789,20200969,@res) ;
+select @res;
+CALL returnbook(23,20200969);
 
 select * from Circulation;
 select * from fine;
-select * from Book;
-delete  from circulation;
 
+-- nsert into fine values(1234567890123,20,
+-- 1234567890126,20200969
+select * from Book;
+select * from user;
+delete  from circulation;
 
 -- All checked out books from library
 select  Book.ISBN,Book.ISBN,Book.Edition,Book.Publisher ,Book.Copies as Copies_Availabe , count(Book.ISBN) as Lended_Copies from Book inner join Circulation on Book.ISBN=Circulation.book_id where Book.ISBN group by Book.ISBN;
 -- Total Fine for User
 select User.cardno, User.Name  , sum(fine.charges) as Total_Fine from User natural join fine where cardno=20200969 group by cardno;
--- All checked out by user
+
 
 -- all fined borrows of the user   
 select  Circulation.loan_id ,Book.ISBN,Book.Title,Book.Edition,Circulation.due_date ,Circulation.returned_date,fine.charges,fine.reason from Book inner join Circulation on Book.ISBN=circulation.book_id inner join fine on (circulation.CardNo=fine.CardNo and circulation.loan_id=fine.circulation_id) where Circulation.CardNo=20200969  ;
 
-alter table user modify Password varchar(60) not null;
+-- to get all currently borrowed books by the user
+select * from   `library_management`.`circulation` inner join  `library_management`.`Book` on circulation.book_id=Book.ISBN  where CardNo=20200969 and status='P';
 
-select * from user;
-delete from user where CardNo =20200111;
+select   ISBN,Title , User.CardNo,Name, loan_date, due_date from `library_management`.`circulation` inner join  `library_management`.`Book` on circulation.book_id=Book.ISBN  inner join   `library_management`.`User` on (circulation.CardNo=User.CardNo ) where  status='P';
 
 
-    
+-- select * from user;
