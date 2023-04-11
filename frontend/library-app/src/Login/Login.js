@@ -1,12 +1,15 @@
 import React from 'react'
 import {useState} from 'react'
+import User from '../User/User'
 import { useNavigate } from 'react-router-dom';
 import './Login.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
+import {setGlobalState , useGlobalState} from '../userContext'
 
 
-export default function Login() {
+
+export default function Login(props) {
 
     const [logininfo,setlogininfo] = useState({
       email: '',
@@ -14,6 +17,7 @@ export default function Login() {
     })
     const [passwordError, setpasswordError] = useState("");
     const [Login,setLogin] = useState(false);
+    const [stat] = useGlobalState("login");
 
     const navigate = useNavigate();
 
@@ -27,7 +31,9 @@ export default function Login() {
         axios.post('http://localhost:8000/user/login', logininfo)
           .then(res => {
             console.log(res.data);
+            setLogin(true);
             navigate('/User');
+            User(res.data);
           })
           .catch(err => {
             console.log(err);
@@ -40,6 +46,8 @@ export default function Login() {
     
 
   return (
+
+  
     <div className="container">
         <div className="row d-flex justify-content-center">
           <div className="col-md-4">

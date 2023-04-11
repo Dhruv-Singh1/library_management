@@ -17,8 +17,10 @@ class User{
        try{
         let id=this.email.slice(1, 9);
         console.log(encryptedUserPassword.length)
+        console.log(this.deptname);
          let insertuser= `insert into \`library_management\`.\`user\` values (${id},'${this.name}',${this.phoneno},'${this.email}','${encryptedUserPassword}','${this.deptname}')`;
         db.execute(insertuser);
+        console.log(this.bhawan +" "+this.room+" "+this.homeaddress);
         let useraddress= `insert into \`library_management\`.\`Address\` values (${id},'${this.bhawan}',${this.room},'${this.homeaddress}')`;
         db.execute(useraddress);
         }

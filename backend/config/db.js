@@ -5,7 +5,9 @@ const pool = mysql.createPool({
     host: process.env.DB_HOST ,
     user:  process.env.DB_USER,
     databse:  process.env.DB_NAME,
-    password: process.env.DB_PASSWORD, }
+    password: process.env.DB_PASSWORD,
+    multipleStatements: true,
+}
 );
 
 // pool.execute("select * from `library_management`.`Book`",(err,res)=>{

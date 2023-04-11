@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 
 exports.createNewUser= async (req,res,next)=>{
     try{
-    let {name,phoneno,email,pass,deptname,address,room,bhawan,homeaddress} =req.body;
-    let user = new User(name,phoneno,email,pass,deptname,address,room,bhawan,homeaddress);
+    let {name,phoneno,email,pass,deptname,room,bhawan,homeaddress} =req.body;
+    let user = new User(name,phoneno,email,pass,deptname,room,bhawan,homeaddress);
     user= await user.save();
     console.log(user);
     res.status(201).send({message:"new user registered"});   

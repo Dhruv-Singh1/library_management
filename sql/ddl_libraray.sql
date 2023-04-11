@@ -85,8 +85,9 @@
     status varchar(1) NOT NULL,
 	CONSTRAINT valid_status check (status="P" or status="R") ,
     CONSTRAINT fk_book FOREIGN KEY (book_id) REFERENCES `library_management`.`Book`(ISBN) , 
-	CONSTRAINT fk_user FOREIGN KEY (CardNo) REFERENCES `library_management`.`User`(CardNo) on delete  cascade on update cascade
+	CONSTRAINT fk_user FOREIGN KEY (CardNo) REFERENCES `library_management`.`User`(CardNo) on delete  cascade
     );
+    
 --  Fines table
     create table `library_management`.`fine`
 	(
@@ -96,7 +97,7 @@
     reason varchar(45),
     FOREIGN KEY (circulation_id) REFERENCES `library_management`.`circulation`(loan_id),
     CONSTRAINT pos_fine check (charges>0) ,
-    CONSTRAINT fk_usr_fine FOREIGN KEY (CardNo) REFERENCES `library_management`.`User`(CardNo) on delete  cascade on update cascade
+    CONSTRAINT fk_usr_fine FOREIGN KEY (CardNo) REFERENCES `library_management`.`User`(CardNo) on delete  cascade
     );
     
 
